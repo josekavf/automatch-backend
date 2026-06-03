@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+# Observability Config
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://otel-collector:4318/v1/traces
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+
+# Swagger Aggregation Config
+springdoc:
+  swagger-ui:
+    urls:
+      - name: IAM Service
+        url: /iam-service/v3/api-docs
+      - name: Catalog Service
+        url: /catalog-service/v3/api-docs
+      - name: Booking Service
+        url: /booking-service/v3/api-docs

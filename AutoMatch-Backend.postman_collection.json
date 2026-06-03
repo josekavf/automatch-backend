@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "a9a3b7d1-e5d7-4b6e-b3f2-9876543210ab",
+		"name": "AutoMatch-Backend",
+		"description": "API collection for the AutoMatch system microservices, including Auth, Catalog, and Booking functionalities.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jose.silva@example.com\",\n    \"password\": \"senha123\",\n    \"firstName\": \"José\",\n    \"lastName\": \"Silva\",\n    \"role\": \"CLIENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registers a new user (CLIENT or MECHANIC). Mechanics will automatically have a professional profile created."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jose.silva@example.com\",\n    \"password\": \"senha123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticates a user and returns a JWT token. The token is automatically saved to the environment variable 'token'."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Catalog",
+			"item": [
+				{
+					"name": "Search Professionals",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/professionals/search?specialty=Mecânico",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"professionals",
+								"search"
+							],
+							"query": [
+								{
+									"key": "specialty",
+									"value": "Mecânico",
+									"description": "Optional specialty to filter results"
+								}
+							]
+						},
+						"description": "Search for registered professionals. Requires a valid JWT token."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Booking",
+			"item": [
+				{
+					"name": "Create Booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientId\": \"{{userId}}\",\n    \"professionalId\": \"{{mechanicId}}\",\n    \"serviceName\": \"Troca de Óleo e Filtro\",\n    \"appointmentTime\": \"2026-07-15T14:30:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bookings"
+							]
+						},
+						"description": "Creates a new service booking request. Requires valid UUIDs for client and professional."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+			"type": "string"
+		},
+		{
+			"key": "mechanicId",
+			"value": "4fa85f64-5717-4562-b3fc-2c963f66afa7",
+			"type": "string"
+		}
+	]
+}

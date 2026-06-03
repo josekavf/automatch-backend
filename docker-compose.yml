@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: automatch-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - automatch-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: automatch-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - automatch-net
+
+  kafka:
+    image: bitnami/kafka:3.6.1
+    container_name: automatch-kafka
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_KRAFT_CLUSTER_ID=L69V4vT4Tz2X6Z0X8y3X4A
+    networks:
+      - automatch-net
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.96.0
+    container_name: automatch-otel
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./docker/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+    networks:
+      - automatch-net
+
+networks:
+  automatch-net:
+    driver: bridge
