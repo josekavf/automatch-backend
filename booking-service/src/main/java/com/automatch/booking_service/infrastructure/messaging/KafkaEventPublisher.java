@@ -25,6 +25,6 @@ public class KafkaEventPublisher implements EventPublisher {
     @Override
     public void publishNotification(NotificationEvent event) {
         log.info("Publishing notification event: {}", event);
-        kafkaTemplate.send(NOTIFICATION_EVENTS_TOPIC, event.getEmail(), event);
+        kafkaTemplate.send(NOTIFICATION_EVENTS_TOPIC, event.getRecipient(), event);
     }
 }
