@@ -1,6 +1,7 @@
 package com.automatch.catalog_service.presentation.controller;
 
 import com.automatch.catalog_service.application.usecase.SearchProfessionalUseCase;
+import com.automatch.catalog_service.application.usecase.UpdateProfessionalUseCase;
 import com.automatch.catalog_service.infrastructure.cache.ProfessionalRedisEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ class ProfessionalControllerTest {
 
     @MockBean
     private SearchProfessionalUseCase searchProfessionalUseCase;
+
+    @MockBean
+    private UpdateProfessionalUseCase updateProfessionalUseCase;
 
     @Test
     void search_ShouldReturnOk() throws Exception {

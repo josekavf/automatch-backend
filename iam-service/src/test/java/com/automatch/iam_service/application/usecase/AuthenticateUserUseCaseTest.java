@@ -80,7 +80,7 @@ class AuthenticateUserUseCaseTest {
 
         // Execução & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> authenticateUserUseCase.execute(request));
-        assertEquals("Invalid credentials", exception.getMessage());
+        assertEquals("Credenciais inválidas", exception.getMessage());
         
         verify(userRepository).findByEmail(request.getEmail());
         verify(passwordEncoder, never()).matches(anyString(), anyString());
@@ -94,7 +94,7 @@ class AuthenticateUserUseCaseTest {
 
         // Execução & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> authenticateUserUseCase.execute(request));
-        assertEquals("Invalid credentials", exception.getMessage());
+        assertEquals("Credenciais inválidas", exception.getMessage());
         
         verify(userRepository).findByEmail(request.getEmail());
         verify(passwordEncoder).matches(request.getPassword(), user.getPassword());

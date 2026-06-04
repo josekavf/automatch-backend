@@ -82,7 +82,7 @@ class RegisterUserUseCaseTest {
 
         // Execução & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> registerUserUseCase.execute(request));
-        assertEquals("Email already exists", exception.getMessage());
+        assertEquals("E-mail já cadastrado", exception.getMessage());
         
         verify(userRepository).existsByEmail(request.getEmail());
         verify(userRepository, never()).save(any());
