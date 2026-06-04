@@ -90,6 +90,14 @@ Para debugar os microserviços:
 
 ---
 
+## 👥 Autores
+
+- **Daniel Douglas**
+- **Jose Carlos Vaz Felipe**
+- **Lucas Alves dos Reis**
+
+---
+
 ## 🏭 Roteiro para Produção (Roadmap)
 
 Para levar o AutoMatch para um ambiente de produção, siga este roteiro sugerido:
