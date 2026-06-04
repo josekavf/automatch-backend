@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/bookings")
 @RequiredArgsConstructor
-@Tag(name = "Booking", description = "Endpoints for service appointments")
+@Tag(name = "Agendamentos", description = "Endpoints para solicitações de serviços")
 public class BookingController {
     private final CreateBookingUseCase createBookingUseCase;
 
     @PostMapping
-    @Operation(summary = "Create a booking", description = "Requests a new service appointment with a professional")
+    @Operation(summary = "Criar um agendamento", description = "Solicita um novo agendamento de serviço com um profissional")
     public ResponseEntity<Booking> create(@Valid @RequestBody CreateBookingRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(createBookingUseCase.execute(request));
     }

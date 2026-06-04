@@ -18,10 +18,10 @@ public class AuthenticateUserUseCase {
 
     public AuthResponse execute(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new RuntimeException("Credenciais inválidas"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new RuntimeException("Credenciais inválidas");
         }
 
         String token = tokenService.generateToken(user);

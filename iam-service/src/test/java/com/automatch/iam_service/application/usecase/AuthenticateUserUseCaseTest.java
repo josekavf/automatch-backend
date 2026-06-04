@@ -54,15 +54,15 @@ class AuthenticateUserUseCaseTest {
 
     @Test
     void execute_WhenCredentialsAreValid_ShouldReturnAuthResponse() {
-        // Arrange
+        // Preparação
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.getPassword(), user.getPassword())).thenReturn(true);
         when(tokenService.generateToken(user)).thenReturn("jwtToken");
 
-        // Act
+        // Execução
         AuthResponse result = authenticateUserUseCase.execute(request);
 
-        // Assert
+        // Verificação
         assertNotNull(result);
         assertEquals("jwtToken", result.getToken());
         assertEquals(user.getEmail(), result.getEmail());
@@ -75,10 +75,10 @@ class AuthenticateUserUseCaseTest {
 
     @Test
     void execute_WhenUserNotFound_ShouldThrowException() {
-        // Arrange
+        // Preparação
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Execução & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> authenticateUserUseCase.execute(request));
         assertEquals("Invalid credentials", exception.getMessage());
         
@@ -88,11 +88,11 @@ class AuthenticateUserUseCaseTest {
 
     @Test
     void execute_WhenPasswordIsIncorrect_ShouldThrowException() {
-        // Arrange
+        // Preparação
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.getPassword(), user.getPassword())).thenReturn(false);
 
-        // Act & Assert
+        // Execução & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> authenticateUserUseCase.execute(request));
         assertEquals("Invalid credentials", exception.getMessage());
         

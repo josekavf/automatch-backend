@@ -16,12 +16,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/professionals")
 @RequiredArgsConstructor
-@Tag(name = "Professional Catalog", description = "Endpoints for searching professionals")
+@Tag(name = "Catálogo de Profissionais", description = "Endpoints para busca de profissionais")
 public class ProfessionalController {
     private final SearchProfessionalUseCase searchProfessionalUseCase;
 
     @GetMapping("/search")
-    @Operation(summary = "Search professionals", description = "Search for professionals by specialty or list all if no specialty is provided")
+    @Operation(summary = "Buscar profissionais", description = "Busca profissionais por especialidade ou lista todos se nenhuma especialidade for fornecida")
     public ResponseEntity<List<ProfessionalRedisEntity>> search(@RequestParam(required = false) String specialty) {
         return ResponseEntity.ok(searchProfessionalUseCase.execute(specialty));
     }

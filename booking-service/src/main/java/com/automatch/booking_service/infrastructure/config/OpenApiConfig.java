@@ -12,8 +12,8 @@ public class OpenApiConfig {
     public OpenAPI bookingOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("AutoMatch Booking Service API")
-                        .description("Service Booking and OS Management for AutoMatch platform")
+                        .title("API do Serviço de Agendamento do AutoMatch")
+                        .description("Serviço de Agendamento e Gestão de OS para a plataforma AutoMatch")
                         .version("1.0.0"));
     }
 }

@@ -26,7 +26,7 @@ class CreateProfessionalUseCaseTest {
 
     @Test
     void execute_ShouldSaveProfessional() {
-        // Arrange
+        // Preparação
         UserRegisteredEvent event = UserRegisteredEvent.builder()
                 .userId(UUID.randomUUID())
                 .firstName("John")
@@ -37,10 +37,10 @@ class CreateProfessionalUseCaseTest {
         
         when(professionalRepository.save(any(Professional.class))).thenReturn(new Professional());
 
-        // Act
+        // Execução
         createProfessionalUseCase.execute(event);
 
-        // Assert
+        // Verificação
         verify(professionalRepository).save(any(Professional.class));
     }
 }

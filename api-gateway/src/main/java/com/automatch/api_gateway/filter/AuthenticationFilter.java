@@ -21,16 +21,16 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "Missing authorization header", HttpStatus.UNAUTHORIZED);
+                return onError(exchange, "Cabeçalho de autorização ausente", HttpStatus.UNAUTHORIZED);
             }
 
             String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return onError(exchange, "Invalid authorization header", HttpStatus.UNAUTHORIZED);
+                return onError(exchange, "Cabeçalho de autorização inválido", HttpStatus.UNAUTHORIZED);
             }
 
-            // In a real scenario, we would validate the JWT signature here or via an Auth Service call
-            log.info("Token detected in Gateway, forwarding request...");
+            // Em um cenário real, validaríamos a assinatura do JWT aqui ou via chamada ao serviço de Auth
+            log.info("Token detectado no Gateway, encaminhando requisição...");
 
             return chain.filter(exchange);
         };

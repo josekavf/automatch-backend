@@ -21,7 +21,7 @@ spring:
           filters:
             - AuthenticationFilter
 
-        # Swagger routes for aggregation
+        # Rotas do Swagger para agregação
         - id: iam-docs
           uri: http://localhost:8081
           predicates:

@@ -33,7 +33,7 @@ class CreateBookingUseCaseTest {
 
     @Test
     void execute_ShouldSaveBookingAndPublishEvent() {
-        // Arrange
+        // Preparação
         CreateBookingRequest request = new CreateBookingRequest();
         request.setClientId(UUID.randomUUID());
         request.setProfessionalId(UUID.randomUUID());
@@ -51,10 +51,10 @@ class CreateBookingUseCaseTest {
 
         when(bookingRepository.save(any(Booking.class))).thenReturn(savedBooking);
 
-        // Act
+        // Execução
         Booking result = createBookingUseCase.execute(request);
 
-        // Assert
+        // Verificação
         assertNotNull(result);
         assertEquals(BookingStatus.REQUESTED, result.getStatus());
         assertEquals(request.getClientId(), result.getClientId());

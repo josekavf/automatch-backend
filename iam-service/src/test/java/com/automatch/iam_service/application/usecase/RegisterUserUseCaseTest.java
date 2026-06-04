@@ -48,7 +48,7 @@ class RegisterUserUseCaseTest {
 
     @Test
     void execute_WhenEmailDoesNotExist_ShouldSaveUserAndPublishEvent() {
-        // Arrange
+        // Preparação
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
         
@@ -62,10 +62,10 @@ class RegisterUserUseCaseTest {
         
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-        // Act
+        // Execução
         User result = registerUserUseCase.execute(request);
 
-        // Assert
+        // Verificação
         assertNotNull(result);
         assertEquals(savedUser.getId(), result.getId());
         assertEquals(request.getEmail(), result.getEmail());
@@ -77,10 +77,10 @@ class RegisterUserUseCaseTest {
 
     @Test
     void execute_WhenEmailExists_ShouldThrowException() {
-        // Arrange
+        // Preparação
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
 
-        // Act & Assert
+        // Execução & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> registerUserUseCase.execute(request));
         assertEquals("Email already exists", exception.getMessage());
         

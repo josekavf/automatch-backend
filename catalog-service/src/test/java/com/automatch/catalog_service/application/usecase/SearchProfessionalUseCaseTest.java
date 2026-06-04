@@ -26,7 +26,7 @@ class SearchProfessionalUseCaseTest {
 
     @Test
     void execute_WhenSpecialtyProvided_ShouldFilterBySpecialty() {
-        // Arrange
+        // Preparação
         String specialty = "Mechanic";
         ProfessionalRedisEntity entity = ProfessionalRedisEntity.builder()
                 .id(UUID.randomUUID())
@@ -36,10 +36,10 @@ class SearchProfessionalUseCaseTest {
         
         when(professionalRedisRepository.findBySpecialty(specialty)).thenReturn(List.of(entity));
 
-        // Act
+        // Execução
         List<ProfessionalRedisEntity> result = searchProfessionalUseCase.execute(specialty);
 
-        // Assert
+        // Verificação
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(specialty, result.get(0).getSpecialty());
@@ -48,7 +48,7 @@ class SearchProfessionalUseCaseTest {
 
     @Test
     void execute_WhenNoSpecialtyProvided_ShouldReturnAll() {
-        // Arrange
+        // Preparação
         ProfessionalRedisEntity entity = ProfessionalRedisEntity.builder()
                 .id(UUID.randomUUID())
                 .firstName("John")
@@ -56,10 +56,10 @@ class SearchProfessionalUseCaseTest {
         
         when(professionalRedisRepository.findAll()).thenReturn(List.of(entity));
 
-        // Act
+        // Execução
         List<ProfessionalRedisEntity> result = searchProfessionalUseCase.execute(null);
 
-        // Assert
+        // Verificação
         assertNotNull(result);
         assertEquals(1, result.size());
         verify(professionalRedisRepository).findAll();

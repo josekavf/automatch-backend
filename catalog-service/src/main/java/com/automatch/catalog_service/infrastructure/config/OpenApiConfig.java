@@ -12,8 +12,8 @@ public class OpenApiConfig {
     public OpenAPI catalogOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("AutoMatch Catalog Service API")
-                        .description("Professional Catalog service for AutoMatch platform")
+                        .title("API do Serviço de Catálogo do AutoMatch")
+                        .description("Serviço de Catálogo de Profissionais para a plataforma AutoMatch")
                         .version("1.0.0"));
     }
 }

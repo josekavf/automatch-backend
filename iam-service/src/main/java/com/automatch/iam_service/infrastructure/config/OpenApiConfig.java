@@ -12,8 +12,8 @@ public class OpenApiConfig {
     public OpenAPI iamOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("AutoMatch IAM Service API")
-                        .description("Identity and Access Management service for AutoMatch platform")
+                        .title("API do Serviço IAM do AutoMatch")
+                        .description("Serviço de Gestão de Identidade e Acesso para a plataforma AutoMatch")
                         .version("1.0.0"));
     }
 }

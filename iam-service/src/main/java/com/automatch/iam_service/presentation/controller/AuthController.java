@@ -20,19 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-@Tag(name = "Authentication", description = "Endpoints for user registration and authentication")
+@Tag(name = "Autenticação", description = "Endpoints para registro e autenticação de usuários")
 public class AuthController {
     private final RegisterUserUseCase registerUserUseCase;
     private final AuthenticateUserUseCase authenticateUserUseCase;
 
     @PostMapping("/register")
-    @Operation(summary = "Register a new user", description = "Creates a new user account (Client or Mechanic)")
+    @Operation(summary = "Registrar um novo usuário", description = "Cria uma nova conta de usuário (Cliente ou Mecânico)")
     public ResponseEntity<User> register(@Valid @RequestBody RegisterUserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(registerUserUseCase.execute(request));
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Authenticate user", description = "Authenticates a user and returns a JWT token")
+    @Operation(summary = "Autenticar usuário", description = "Autentica um usuário e retorna um token JWT")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authenticateUserUseCase.execute(request));
     }

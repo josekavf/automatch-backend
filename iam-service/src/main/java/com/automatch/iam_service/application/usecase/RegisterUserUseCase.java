@@ -20,7 +20,7 @@ public class RegisterUserUseCase {
     @Transactional
     public User execute(RegisterUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new RuntimeException("E-mail já cadastrado");
         }
 
         User user = User.builder()

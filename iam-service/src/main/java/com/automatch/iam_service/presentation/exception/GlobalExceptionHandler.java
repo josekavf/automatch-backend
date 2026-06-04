@@ -20,11 +20,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
-        log.error("Runtime exception: ", ex);
+        log.error("Erro de execução: ", ex);
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error("Bad Request")
+                .error("Requisição Inválida")
                 .message(ex.getMessage())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation Error")
+                .error("Erro de Validação")
                 .message(message)
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
@@ -54,6 +54,6 @@ public class GlobalExceptionHandler {
         private int status;
         private String error;
         private String message;
-        private String traceId; // Should be populated from OTel context if available
+        private String traceId; // Deve ser preenchido a partir do contexto OTel se disponível
     }
 }
