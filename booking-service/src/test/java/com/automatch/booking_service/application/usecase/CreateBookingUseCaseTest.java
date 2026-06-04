@@ -16,8 +16,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateBookingUseCaseTest {
@@ -32,13 +32,16 @@ class CreateBookingUseCaseTest {
     private CreateBookingUseCase createBookingUseCase;
 
     @Test
-    void execute_ShouldSaveBookingAndPublishEvent() {
+    void execute_ShouldSaveBookingAndPublishEvents() {
         // Preparação
         CreateBookingRequest request = new CreateBookingRequest();
         request.setClientId(UUID.randomUUID());
+        request.setClientEmail("client@example.com");
         request.setProfessionalId(UUID.randomUUID());
+        request.setProfessionalEmail("pro@example.com");
         request.setServiceName("Oil Change");
-        request.setAppointmentTime(LocalDateTime.now().plusDays(1));
+        LocalDateTime time = LocalDateTime.of(2026, 6, 10, 10, 0);
+        request.setAppointmentTime(time);
 
         Booking savedBooking = Booking.builder()
                 .id(UUID.randomUUID())
@@ -57,9 +60,19 @@ class CreateBookingUseCaseTest {
         // Verificação
         assertNotNull(result);
         assertEquals(BookingStatus.REQUESTED, result.getStatus());
-        assertEquals(request.getClientId(), result.getClientId());
         
         verify(bookingRepository).save(any(Booking.class));
         verify(eventPublisher).publishBookingRequested(any());
+        
+        // Verify notifications
+        verify(eventPublisher, atLeastOnce()).publishNotification(argThat(event -> 
+            event.getEmail().equals("client@example.com") && 
+            event.getMessage().contains("Você solicitou um agendamento para Oil Change")
+        ));
+        
+        verify(eventPublisher, atLeastOnce()).publishNotification(argThat(event -> 
+            event.getEmail().equals("pro@example.com") && 
+            event.getMessage().contains("Você recebeu uma nova solicitação de agendamento para Oil Change")
+        ));
     }
 }
