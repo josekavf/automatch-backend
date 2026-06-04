@@ -23,7 +23,7 @@ services:
       - automatch-net
 
   kafka:
-    image: bitnami/kafka:3.6.1
+    image: bitnamilegacy/kafka:3.7.0
     container_name: automatch-kafka
     ports:
       - "9092:9092"
@@ -49,6 +49,21 @@ services:
     ports:
       - "4317:4317" # OTLP gRPC
       - "4318:4318" # OTLP HTTP
+    networks:
+      - automatch-net
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    container_name: automatch-notification
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - kafka
     networks:
       - automatch-net
 
