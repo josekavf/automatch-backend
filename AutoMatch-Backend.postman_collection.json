@@ -138,7 +138,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"clientId\": \"{{userId}}\",\n    \"professionalId\": \"{{mechanicId}}\",\n    \"serviceName\": \"Troca de Óleo e Filtro\",\n    \"appointmentTime\": \"2026-07-15T14:30:00\"\n}",
+							"raw": "{\n    \"clientId\": \"{{userId}}\",\n    \"clientEmail\": \"jose.silva@example.com\",\n    \"professionalId\": \"{{mechanicId}}\",\n    \"professionalEmail\": \"professional@example.com\",\n    \"serviceName\": \"Troca de Óleo e Filtro\",\n    \"appointmentTime\": \"2026-07-15T14:30:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
