@@ -119,6 +119,42 @@
 						"description": "Search for registered professionals. Requires a valid JWT token."
 					},
 					"response": []
+				},
+				{
+					"name": "Update Professional",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"José\",\n    \"lastName\": \"Mecânico\",\n    \"specialty\": \"Mecânico de Motores\",\n    \"services\": [\"Troca de Óleo\", \"Revisão Geral\"],\n    \"active\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/professionals/{{mechanicId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"professionals",
+								"{{mechanicId}}"
+							]
+						},
+						"description": "Updates professional profile details. Requires a valid JWT token."
+					},
+					"response": []
 				}
 			]
 		},
