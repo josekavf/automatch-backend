@@ -42,3 +42,17 @@ spring:
             - Path=/booking-service/v3/api-docs/**
           filters:
             - RewritePath=/booking-service/(?<path>.*), /${path}
+
+        - id: notification-service
+          uri: http://notification-service:8084
+          predicates:
+            - Path=/api/v1/notifications/**
+          filters:
+            - AuthenticationFilter
+
+        - id: notification-docs
+          uri: http://notification-service:8084
+          predicates:
+            - Path=/notification-service/v3/api-docs/**
+          filters:
+            - RewritePath=/notification-service/(?<path>.*), /${path}
