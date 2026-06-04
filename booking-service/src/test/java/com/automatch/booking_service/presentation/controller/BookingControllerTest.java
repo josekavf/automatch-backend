@@ -39,7 +39,9 @@ class BookingControllerTest {
     void create_ShouldReturnCreated() throws Exception {
         CreateBookingRequest request = new CreateBookingRequest();
         request.setClientId(UUID.randomUUID());
+        request.setClientEmail("client@example.com");
         request.setProfessionalId(UUID.randomUUID());
+        request.setProfessionalEmail("pro@example.com");
         request.setServiceName("Oil Change");
         request.setAppointmentTime(LocalDateTime.now().plusDays(1));
 
