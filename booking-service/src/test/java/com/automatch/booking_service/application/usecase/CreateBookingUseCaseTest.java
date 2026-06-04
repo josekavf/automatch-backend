@@ -66,12 +66,12 @@ class CreateBookingUseCaseTest {
         
         // Verify notifications
         verify(eventPublisher, atLeastOnce()).publishNotification(argThat(event -> 
-            event.getEmail().equals("client@example.com") && 
+            event.getRecipient().equals("client@example.com") && 
             event.getMessage().contains("Você solicitou um agendamento para Oil Change")
         ));
         
         verify(eventPublisher, atLeastOnce()).publishNotification(argThat(event -> 
-            event.getEmail().equals("pro@example.com") && 
+            event.getRecipient().equals("pro@example.com") && 
             event.getMessage().contains("Você recebeu uma nova solicitação de agendamento para Oil Change")
         ));
     }

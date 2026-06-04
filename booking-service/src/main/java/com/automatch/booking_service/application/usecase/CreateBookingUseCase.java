@@ -44,14 +44,14 @@ public class CreateBookingUseCase {
 
         // Notify Client
         eventPublisher.publishNotification(NotificationEvent.builder()
-                .email(request.getClientEmail())
+                .recipient(request.getClientEmail())
                 .message(String.format("Você solicitou um agendamento para %s com o profissional em %s.",
                         savedBooking.getServiceName(), formattedTime))
                 .build());
 
         // Notify Professional
         eventPublisher.publishNotification(NotificationEvent.builder()
-                .email(request.getProfessionalEmail())
+                .recipient(request.getProfessionalEmail())
                 .message(String.format("Você recebeu uma nova solicitação de agendamento para %s em %s.",
                         savedBooking.getServiceName(), formattedTime))
                 .build());
