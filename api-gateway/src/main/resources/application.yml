@@ -30,3 +30,5 @@ springdoc:
         url: /catalog-service/v3/api-docs
       - name: Serviço de Agendamento
         url: /booking-service/v3/api-docs
+      - name: Serviço de Notificação
+        url: /notification-service/v3/api-docs
