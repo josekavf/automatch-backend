@@ -26,35 +26,40 @@ jobs:
       - name: Build and Push API Gateway
         uses: docker/build-push-action@v5
         with:
-          context: ./api-gateway
+          context: .
+          file: api-gateway/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/api-gateway:latest
 
       - name: Build and Push IAM Service
         uses: docker/build-push-action@v5
         with:
-          context: ./iam-service
+          context: .
+          file: iam-service/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/iam-service:latest
 
       - name: Build and Push Catalog Service
         uses: docker/build-push-action@v5
         with:
-          context: ./catalog-service
+          context: .
+          file: catalog-service/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/catalog-service:latest
 
       - name: Build and Push Booking Service
         uses: docker/build-push-action@v5
         with:
-          context: ./booking-service
+          context: .
+          file: booking-service/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/booking-service:latest
 
       - name: Build and Push Notification Service
         uses: docker/build-push-action@v5
         with:
-          context: ./notification-service
+          context: .
+          file: notification-service/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/notification-service:latest
 
