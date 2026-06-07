@@ -6,6 +6,7 @@ COPY pom.xml .
 COPY iam-service/pom.xml iam-service/
 COPY catalog-service/pom.xml catalog-service/
 COPY booking-service/pom.xml booking-service/
+COPY notification-service/pom.xml notification-service/
 COPY api-gateway/pom.xml api-gateway/
 
 # Download dependencies (this layer will be cached)
