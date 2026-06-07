@@ -3,6 +3,7 @@ package com.automatch.booking_service.presentation.controller;
 import com.automatch.booking_service.application.dto.CreateBookingRequest;
 import com.automatch.booking_service.application.usecase.CreateBookingUseCase;
 import com.automatch.booking_service.domain.model.Booking;
+import com.automatch.booking_service.presentation.annotation.Idempotent;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookingController {
     private final CreateBookingUseCase createBookingUseCase;
 
+    @Idempotent
     @PostMapping
     @Operation(summary = "Criar um agendamento", description = "Solicita um novo agendamento de serviço com um profissional")
     public ResponseEntity<Booking> create(@Valid @RequestBody CreateBookingRequest request) {

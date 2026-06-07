@@ -1,6 +1,9 @@
 package com.automatch.iam_service.presentation.exception;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,6 +19,17 @@ import static org.mockito.Mockito.when;
 class GlobalExceptionHandlerTest {
 
     private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
+    private static final String TRACE_ID = "test-trace-id";
+
+    @BeforeEach
+    void setUp() {
+        MDC.put("traceId", TRACE_ID);
+    }
+
+    @AfterEach
+    void tearDown() {
+        MDC.clear();
+    }
 
     @Test
     void handleRuntimeException_ShouldReturnBadRequest() {
@@ -24,6 +38,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Error message", response.getBody().getMessage());
+        assertEquals(TRACE_ID, response.getBody().getTraceId());
     }
 
     @Test
@@ -39,5 +54,6 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody().getMessage().contains("field: must not be blank"));
+        assertEquals(TRACE_ID, response.getBody().getTraceId());
     }
 }

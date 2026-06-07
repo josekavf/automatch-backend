@@ -1,10 +1,11 @@
-package com.automatch.iam_service.presentation.exception;
+package com.automatch.notification_service.presentation.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
-import org.slf4j.MDC;
 
 @RestControllerAdvice
 @Slf4j
@@ -57,6 +57,6 @@ public class GlobalExceptionHandler {
         private int status;
         private String error;
         private String message;
-        private String traceId; // Deve ser preenchido a partir do contexto OTel se disponível
+        private String traceId;
     }
 }
