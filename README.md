@@ -91,6 +91,33 @@ Os traces são coletados via **OpenTelemetry Collector** e podem ser visualizado
 
 ---
 
+## 🚀 CI/CD Pipeline & Deployment
+
+O projeto utiliza **GitHub Actions** para automação de CI/CD, garantindo qualidade contínua e deploys automatizados em ambientes de Staging e Produção.
+
+### 🔄 Modelo de GitFlow e Promoção
+A pipeline segue um fluxo estruturado de branches para garantir a estabilidade do código:
+
+- **Pull Requests (PRs):** Disparam a esteira de CI que executa builds, testes unitários, testes de integração e análise de qualidade no **SonarCloud**. A aprovação da PR é obrigatória para o merge.
+- **Branch \`develop\` (Staging):** O merge em \`develop\` dispara o deploy automático para o ambiente de **Staging**. É o ambiente de homologação para testes finais.
+- **Branch \`main\` (Produção):** O merge em \`main\` (via PR de \`develop\`) dispara o deploy para o ambiente de **Produção**.
+
+### 🔐 Configuração de Secrets no GitHub
+Para configurar a pipeline em um novo repositório, os seguintes **GitHub Secrets** devem ser adicionados:
+
+| Secret | Descrição |
+|--------|-----------|
+| \`SONAR_TOKEN\` | (Opcional) Token para autenticação no SonarCloud/SonarQube. |
+| \`KUBECONFIG_STAGING\` | Arquivo \`kubeconfig\` (raw ou Base64) para acesso ao cluster de **Staging**. |
+| \`KUBECONFIG_PROD\` | Arquivo \`kubeconfig\` (raw ou Base64) para acesso ao cluster de **Produção**. |
+
+### 📦 Container Registry (GHCR)
+As imagens Docker são automaticamente geradas e armazenadas no **GitHub Container Registry (GHCR)**. 
+- Por padrão, o repositório deve ser **público** para que os clusters Kubernetes possam baixar as imagens sem autenticação adicional.
+- Se o repositório for privado, é necessário configurar um \`imagePullSecret\` nos manifestos do Kubernetes com um **Personal Access Token (PAT)** que tenha permissões de \`read:packages\`.
+
+---
+
 ## 👥 Autores
 
 - **Daniel Douglas**

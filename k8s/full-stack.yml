@@ -7,7 +7,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: automatch-config
-  namespace: automatch
+  namespace: ${NAMESPACE}
 data:
   KAFKA_BOOTSTRAP_SERVERS: "kafka-svc:9092"
   OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector-svc:4318/v1/traces"
@@ -17,7 +17,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: automatch-secrets
-  namespace: automatch
+  namespace: ${NAMESPACE}
 type: Opaque
 data:
   # base64 for 'postgres'
@@ -28,7 +28,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: postgres-init-sql
-  namespace: automatch
+  namespace: ${NAMESPACE}
 data:
   init.sql: |
     CREATE DATABASE iam_db;
@@ -39,7 +39,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -51,7 +51,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -96,7 +96,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: postgres
@@ -109,7 +109,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -130,7 +130,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: redis-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: redis
@@ -143,7 +143,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafka
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -181,7 +181,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kafka-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: kafka
@@ -199,7 +199,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jaeger
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -222,7 +222,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jaeger-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: jaeger
@@ -244,7 +244,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: otel-collector-config
-  namespace: automatch
+  namespace: ${NAMESPACE}
 data:
   otel-collector-config.yaml: |
     receivers:
@@ -272,7 +272,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: otel-collector
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -303,7 +303,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: otel-collector-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: otel-collector
@@ -321,7 +321,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: iam-service
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -334,7 +334,7 @@ spec:
     spec:
       containers:
         - name: iam-service
-          image: automatch-iam-service:latest
+          image: automatch-iam-service:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
@@ -363,7 +363,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: iam-service-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: iam-service
@@ -376,7 +376,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: catalog-service
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -389,7 +389,7 @@ spec:
     spec:
       containers:
         - name: catalog-service
-          image: automatch-catalog-service:latest
+          image: automatch-catalog-service:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8082
@@ -410,7 +410,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: catalog-service-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: catalog-service
@@ -423,7 +423,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: booking-service
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -436,7 +436,7 @@ spec:
     spec:
       containers:
         - name: booking-service
-          image: automatch-booking-service:latest
+          image: automatch-booking-service:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8083
@@ -455,7 +455,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: booking-service-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: booking-service
@@ -468,7 +468,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notification-service
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -481,7 +481,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: automatch-notification-service:latest
+          image: automatch-notification-service:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8084
@@ -498,7 +498,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notification-service-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: notification-service
@@ -511,7 +511,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api-gateway
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -524,7 +524,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: automatch-api-gateway:latest
+          image: automatch-api-gateway:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -539,7 +539,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: api-gateway-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   type: NodePort
   selector:
@@ -553,7 +553,7 @@ spec:
 apiVersion: PersistentVolumeClaim
 metadata:
   name: sonardb-pvc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -565,7 +565,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sonardb
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -598,7 +598,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sonardb-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   selector:
     app: sonardb
@@ -611,7 +611,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sonarqube
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -645,7 +645,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sonarqube-svc
-  namespace: automatch
+  namespace: ${NAMESPACE}
 spec:
   type: NodePort
   selector:
