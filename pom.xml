@@ -35,6 +35,9 @@
         <springdoc.version>2.5.0</springdoc.version>
 
         <!-- SonarQube & JaCoCo Properties -->
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>josekavf</sonar.organization>
+        <sonar.projectKey>josekavf_automatch-backend</sonar.projectKey>
         <sonar.java.binaries>target/classes</sonar.java.binaries>
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
         <sonar.coverage.jacoco.xmlReportPaths>

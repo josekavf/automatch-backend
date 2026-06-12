@@ -21,6 +21,7 @@ public class ProfessionalRedisEntity {
     private UUID id;
     private String firstName;
     private String lastName;
+    private String email;
     @Indexed
     private String specialty;
     private List<String> services;

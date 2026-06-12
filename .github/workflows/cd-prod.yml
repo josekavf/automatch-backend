@@ -8,6 +8,7 @@ on:
 jobs:
   publish-and-deploy:
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       packages: write
@@ -29,7 +30,9 @@ jobs:
           context: .
           file: api-gateway/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/api-gateway:latest
+          tags: |
+            ghcr.io/${{ github.repository }}/api-gateway:latest
+            ghcr.io/${{ github.repository }}/api-gateway:${{ github.sha }}
 
       - name: Build and Push IAM Service
         uses: docker/build-push-action@v5
@@ -37,7 +40,9 @@ jobs:
           context: .
           file: iam-service/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/iam-service:latest
+          tags: |
+            ghcr.io/${{ github.repository }}/iam-service:latest
+            ghcr.io/${{ github.repository }}/iam-service:${{ github.sha }}
 
       - name: Build and Push Catalog Service
         uses: docker/build-push-action@v5
@@ -45,7 +50,9 @@ jobs:
           context: .
           file: catalog-service/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/catalog-service:latest
+          tags: |
+            ghcr.io/${{ github.repository }}/catalog-service:latest
+            ghcr.io/${{ github.repository }}/catalog-service:${{ github.sha }}
 
       - name: Build and Push Booking Service
         uses: docker/build-push-action@v5
@@ -53,7 +60,9 @@ jobs:
           context: .
           file: booking-service/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/booking-service:latest
+          tags: |
+            ghcr.io/${{ github.repository }}/booking-service:latest
+            ghcr.io/${{ github.repository }}/booking-service:${{ github.sha }}
 
       - name: Build and Push Notification Service
         uses: docker/build-push-action@v5
@@ -61,24 +70,31 @@ jobs:
           context: .
           file: notification-service/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/notification-service:latest
+          tags: |
+            ghcr.io/${{ github.repository }}/notification-service:latest
+            ghcr.io/${{ github.repository }}/notification-service:${{ github.sha }}
 
-      - name: Prepare Manifest
-        env:
-          NAMESPACE: production
-          IMAGE_TAG: latest
-          REPOSITORY: ghcr.io/${{ github.repository }}
-        run: |
-          # Replace local image names with GHCR names and then substitute variables
-          sed "s|image: automatch-|image: ${REPOSITORY}/|g" k8s/full-stack.yml | \
-          envsubst '${NAMESPACE} ${IMAGE_TAG}' > k8s/deployment.yml
-
-      - name: Set Kubernetes Context
-        uses: azure/k8s-set-context@v3
+      - name: Copy docker-compose to VPS
+        uses: appleboy/scp-action@master
         with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG_PROD }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          source: "docker-compose.prod.yml"
+          target: "/var/www/automatch"
 
-      - name: Deploy to Production
-        run: |
-          kubectl apply -f k8s/deployment.yml
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            cd /var/www/automatch
+            echo "IMAGE_TAG=${{ github.sha }}" > .env
+            echo "GITHUB_REPOSITORY=${{ github.repository }}" >> .env
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d
+            docker system prune -af
