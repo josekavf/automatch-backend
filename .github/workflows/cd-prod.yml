@@ -103,6 +103,6 @@ jobs:
             echo "GITHUB_REPOSITORY=${{ github.repository }}" >> .env
             echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-            docker-compose -p automatch-prod -f docker-compose.prod.yml pull
-            docker-compose -p automatch-prod -f docker-compose.prod.yml up -d
+            docker compose -p automatch-prod -f docker-compose.prod.yml pull
+            docker compose -p automatch-prod -f docker-compose.prod.yml up -d
             docker system prune -af
