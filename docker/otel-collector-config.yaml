@@ -8,6 +8,16 @@ processors:
   batch:
 
 exporters:
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+  otlphttp/loki:
+    endpoint: "http://loki:3100/otlp"
+    tls:
+      insecure: true
   logging:
     loglevel: debug
 
@@ -16,12 +26,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [logging, otlp/jaeger]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [logging, prometheus]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [logging, otlphttp/loki]

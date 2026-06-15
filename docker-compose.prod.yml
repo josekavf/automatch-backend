@@ -144,6 +144,76 @@ services:
     networks:
       - automatch-net-prod
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: automatch-pgadmin-prod
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@automatch.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "127.0.0.1:5050:80"
+    networks:
+      - automatch-net-prod
+    depends_on:
+      - postgres
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: automatch-kafdrop-prod
+    ports:
+      - "127.0.0.1:9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+    networks:
+      - automatch-net-prod
+    depends_on:
+      - kafka
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: automatch-jaeger-prod
+    ports:
+      - "127.0.0.1:16686:16686"
+      - "4317"
+    networks:
+      - automatch-net-prod
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: automatch-prometheus-prod
+    ports:
+      - "127.0.0.1:9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - automatch-net-prod
+
+  loki:
+    image: grafana/loki:latest
+    container_name: automatch-loki-prod
+    ports:
+      - "127.0.0.1:3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - automatch-net-prod
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: automatch-grafana-prod
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - automatch-net-prod
+    depends_on:
+      - prometheus
+      - jaeger
+      - loki
+
 networks:
   automatch-net-prod:
     driver: bridge
