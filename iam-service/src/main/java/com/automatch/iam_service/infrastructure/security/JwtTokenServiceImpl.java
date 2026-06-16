@@ -29,6 +29,7 @@ public class JwtTokenServiceImpl implements TokenService {
         claims.put("role", user.getRole().name());
         claims.put("firstName", user.getFirstName());
         claims.put("lastName", user.getLastName());
+        claims.put("id", user.getId().toString());
 
         return Jwts.builder()
                 .setClaims(claims)
