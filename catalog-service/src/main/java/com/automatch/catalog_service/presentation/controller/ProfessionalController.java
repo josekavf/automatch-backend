@@ -20,6 +20,13 @@ import java.util.UUID;
 public class ProfessionalController {
     private final SearchProfessionalUseCase searchProfessionalUseCase;
     private final UpdateProfessionalUseCase updateProfessionalUseCase;
+    private final com.automatch.catalog_service.application.usecase.GetProfessionalUseCase getProfessionalUseCase;
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Obter profissional por ID", description = "Retorna os detalhes de um profissional específico")
+    public ResponseEntity<com.automatch.catalog_service.domain.model.Professional> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(getProfessionalUseCase.execute(id));
+    }
 
     @GetMapping("/search")
     @Operation(summary = "Buscar profissionais", description = "Busca profissionais por especialidade ou lista todos se nenhuma especialidade for fornecida")
