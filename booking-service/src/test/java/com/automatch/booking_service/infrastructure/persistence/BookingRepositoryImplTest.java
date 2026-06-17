@@ -45,7 +45,7 @@ class BookingRepositoryImplTest {
                 .professionalId(professionalId)
                 .serviceName("Test Service")
                 .appointmentTime(now)
-                .status(BookingStatus.REQUESTED)
+                .status(BookingStatus.PENDING)
                 .build();
 
         bookingEntity = BookingEntity.builder()
@@ -54,7 +54,7 @@ class BookingRepositoryImplTest {
                 .professionalId(professionalId)
                 .serviceName("Test Service")
                 .appointmentTime(now)
-                .status(BookingStatus.REQUESTED)
+                .status(BookingStatus.PENDING)
                 .build();
     }
 

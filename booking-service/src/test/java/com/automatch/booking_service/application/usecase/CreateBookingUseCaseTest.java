@@ -49,7 +49,7 @@ class CreateBookingUseCaseTest {
                 .professionalId(request.getProfessionalId())
                 .serviceName(request.getServiceName())
                 .appointmentTime(request.getAppointmentTime())
-                .status(BookingStatus.REQUESTED)
+                .status(BookingStatus.PENDING)
                 .build();
 
         when(bookingRepository.save(any(Booking.class))).thenReturn(savedBooking);
@@ -59,7 +59,7 @@ class CreateBookingUseCaseTest {
 
         // Verificação
         assertNotNull(result);
-        assertEquals(BookingStatus.REQUESTED, result.getStatus());
+        assertEquals(BookingStatus.PENDING, result.getStatus());
         
         verify(bookingRepository).save(any(Booking.class));
         verify(eventPublisher).publishBookingRequested(any());

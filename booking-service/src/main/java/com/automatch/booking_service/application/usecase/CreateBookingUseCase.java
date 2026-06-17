@@ -27,7 +27,7 @@ public class CreateBookingUseCase {
                 .professionalId(request.getProfessionalId())
                 .serviceName(request.getServiceName())
                 .appointmentTime(request.getAppointmentTime())
-                .status(BookingStatus.REQUESTED)
+                .status(BookingStatus.PENDING)
                 .build();
 
         Booking savedBooking = bookingRepository.save(booking);

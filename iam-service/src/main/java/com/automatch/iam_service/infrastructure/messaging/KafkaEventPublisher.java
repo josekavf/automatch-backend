@@ -7,16 +7,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.scheduling.annotation.Async;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class KafkaEventPublisher implements EventPublisher {
+public class KafkaEventPublisher {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private static final String USER_EVENTS_TOPIC = "topic-user-events";
 
-    @Override
-    public void publishUserRegistered(UserRegisteredEvent event) {
-        log.info("Publishing user registered event: {}", event);
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleUserRegisteredEvent(UserRegisteredEvent event) {
+        log.info("Transaction committed. Publishing user registered event to Kafka: {}", event);
         kafkaTemplate.send(USER_EVENTS_TOPIC, event.getUserId().toString(), event);
     }
 }

@@ -48,4 +48,9 @@ public class BookingRepositoryImpl implements BookingRepository {
                 .status(e.getStatus())
                 .build();
     }
+
+    @Override
+    public org.springframework.data.domain.Page<Booking> findAll(com.automatch.booking_service.domain.model.BookingStatus status, UUID clientId, UUID professionalId, org.springframework.data.domain.Pageable pageable) {
+        return jpaBookingRepository.findBookings(status, clientId, professionalId, pageable).map(this::toDomain);
+    }
 }

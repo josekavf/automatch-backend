@@ -32,13 +32,14 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleRuntimeException_ShouldReturnBadRequest() {
-        RuntimeException ex = new RuntimeException("Error message");
-        ResponseEntity<GlobalExceptionHandler.ErrorResponse> response = handler.handleRuntimeException(ex);
+    void shouldHandleBusinessException() {
+        com.automatch.iam_service.domain.exception.BusinessException exception = new com.automatch.iam_service.domain.exception.BusinessException("Business error message");
+        ResponseEntity<GlobalExceptionHandler.ErrorResponse> response = handler.handleBusinessException(exception);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Error message", response.getBody().getMessage());
-        assertEquals(TRACE_ID, response.getBody().getTraceId());
+        assertNotNull(response.getBody());
+        assertEquals("Business Rule Violation", response.getBody().getError());
+        assertEquals("Business error message", response.getBody().getMessage());
     }
 
     @Test

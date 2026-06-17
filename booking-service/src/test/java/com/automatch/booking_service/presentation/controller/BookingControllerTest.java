@@ -47,7 +47,7 @@ class BookingControllerTest {
 
         Booking booking = Booking.builder()
                 .id(UUID.randomUUID())
-                .status(BookingStatus.REQUESTED)
+                .status(BookingStatus.PENDING)
                 .build();
 
         when(createBookingUseCase.execute(any())).thenReturn(booking);

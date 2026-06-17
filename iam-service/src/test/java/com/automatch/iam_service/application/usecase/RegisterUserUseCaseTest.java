@@ -8,7 +8,6 @@ import com.automatch.iam_service.domain.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +30,9 @@ class RegisterUserUseCaseTest {
     @Mock
     private EventPublisher eventPublisher;
 
-    @InjectMocks
+    @Mock
+    private com.automatch.iam_service.application.validator.UserRegistrationValidator validator;
+
     private RegisterUserUseCase registerUserUseCase;
 
     private RegisterUserRequest request;
@@ -44,12 +45,12 @@ class RegisterUserUseCaseTest {
         request.setFirstName("John");
         request.setLastName("Doe");
         request.setRole(Role.CLIENT);
+        registerUserUseCase = new RegisterUserUseCase(userRepository, passwordEncoder, eventPublisher, java.util.List.of(validator));
     }
 
     @Test
-    void execute_WhenEmailDoesNotExist_ShouldSaveUserAndPublishEvent() {
-        // Preparação
-        when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
+    void execute_WhenValid_ShouldSaveUserAndPublishEvent() {
+        doNothing().when(validator).validate(request);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
         
         User savedUser = User.builder()
@@ -62,29 +63,25 @@ class RegisterUserUseCaseTest {
         
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-        // Execução
         User result = registerUserUseCase.execute(request);
 
-        // Verificação
         assertNotNull(result);
         assertEquals(savedUser.getId(), result.getId());
         assertEquals(request.getEmail(), result.getEmail());
         
-        verify(userRepository).existsByEmail(request.getEmail());
+        verify(validator).validate(request);
         verify(userRepository).save(any(User.class));
         verify(eventPublisher).publishUserRegistered(any());
     }
 
     @Test
-    void execute_WhenEmailExists_ShouldThrowException() {
-        // Preparação
-        when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
+    void execute_WhenInvalid_ShouldThrowException() {
+        doThrow(new com.automatch.iam_service.domain.exception.EmailAlreadyExistsException()).when(validator).validate(request);
 
-        // Execução & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> registerUserUseCase.execute(request));
+        com.automatch.iam_service.domain.exception.EmailAlreadyExistsException exception = assertThrows(com.automatch.iam_service.domain.exception.EmailAlreadyExistsException.class, () -> registerUserUseCase.execute(request));
         assertEquals("E-mail já cadastrado", exception.getMessage());
         
-        verify(userRepository).existsByEmail(request.getEmail());
+        verify(validator).validate(request);
         verify(userRepository, never()).save(any());
         verify(eventPublisher, never()).publishUserRegistered(any());
     }

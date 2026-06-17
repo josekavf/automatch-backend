@@ -10,18 +10,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import com.automatch.iam_service.application.validator.UserRegistrationValidator;
+
 @Service
 @RequiredArgsConstructor
 public class RegisterUserUseCase {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EventPublisher eventPublisher;
+    private final List<UserRegistrationValidator> validators;
 
     @Transactional
     public User execute(RegisterUserRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("E-mail já cadastrado");
-        }
+        validators.forEach(v -> v.validate(request));
 
         User user = User.builder()
                 .email(request.getEmail())

@@ -8,12 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CreateProfessionalUseCaseTest {
@@ -21,26 +21,19 @@ class CreateProfessionalUseCaseTest {
     @Mock
     private ProfessionalRepository professionalRepository;
 
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @InjectMocks
     private CreateProfessionalUseCase createProfessionalUseCase;
 
     @Test
     void execute_ShouldSaveProfessional() {
-        // Preparação
-        UserRegisteredEvent event = UserRegisteredEvent.builder()
-                .userId(UUID.randomUUID())
-                .firstName("John")
-                .lastName("Doe")
-                .email("john@example.com")
-                .role("MECHANIC")
-                .build();
-        
-        when(professionalRepository.save(any(Professional.class))).thenReturn(new Professional());
+        UserRegisteredEvent event = new UserRegisteredEvent(UUID.randomUUID(), "john.doe@example.com", "John", "Doe", "PROFESSIONAL");
 
-        // Execução
         createProfessionalUseCase.execute(event);
 
-        // Verificação
         verify(professionalRepository).save(any(Professional.class));
+        verify(applicationEventPublisher).publishEvent(any(com.automatch.catalog_service.domain.event.ProfessionalCreatedEvent.class));
     }
 }

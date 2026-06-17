@@ -19,17 +19,30 @@ import org.slf4j.MDC;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
-        log.error("Erro de execução: ", ex);
+    @ExceptionHandler(com.automatch.iam_service.domain.exception.BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(com.automatch.iam_service.domain.exception.BusinessException ex) {
+        log.warn("Business rule violation: {}", ex.getMessage());
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error("Requisição Inválida")
+                .error("Business Rule Violation")
                 .message(ex.getMessage())
                 .traceId(MDC.get("traceId"))
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        log.error("Erro interno do servidor: ", ex);
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Internal Server Error")
+                .message("Ocorreu um erro inesperado. Tente novamente mais tarde.")
+                .traceId(MDC.get("traceId"))
+                .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
