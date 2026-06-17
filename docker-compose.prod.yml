@@ -224,3 +224,5 @@ networks:
 
 volumes:
   postgres_data:
+
+# Ghost change to trigger infrastructure deploy in CI/CD pipeline
