@@ -107,7 +107,7 @@ jobs:
           source: "docker-compose.prod.yml,docker/"
           target: "automatch-backend/prod"
 
-      - name: Deploy to VPS
+      - name: Configure .env on VPS
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -121,6 +121,77 @@ jobs:
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             echo "POSTGRES_USER=${{ secrets.DB_USERNAME }}" >> .env
             echo "POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-            docker compose -p automatch-prod -f docker-compose.prod.yml pull
-            docker compose -p automatch-prod -f docker-compose.prod.yml up -d
-            docker system prune -af
+
+      - name: Deploy API Gateway
+        if: steps.changes.outputs.api_gateway == 'true'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          command_timeout: 30m
+          script: |
+            cd automatch-backend/prod
+            docker compose -p automatch-prod -f docker-compose.prod.yml pull api-gateway
+            docker compose -p automatch-prod -f docker-compose.prod.yml up -d api-gateway
+
+      - name: Deploy IAM Service
+        if: steps.changes.outputs.iam_service == 'true'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          command_timeout: 30m
+          script: |
+            cd automatch-backend/prod
+            docker compose -p automatch-prod -f docker-compose.prod.yml pull iam-service
+            docker compose -p automatch-prod -f docker-compose.prod.yml up -d iam-service
+
+      - name: Deploy Catalog Service
+        if: steps.changes.outputs.catalog_service == 'true'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          command_timeout: 30m
+          script: |
+            cd automatch-backend/prod
+            docker compose -p automatch-prod -f docker-compose.prod.yml pull catalog-service
+            docker compose -p automatch-prod -f docker-compose.prod.yml up -d catalog-service
+
+      - name: Deploy Booking Service
+        if: steps.changes.outputs.booking_service == 'true'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          command_timeout: 30m
+          script: |
+            cd automatch-backend/prod
+            docker compose -p automatch-prod -f docker-compose.prod.yml pull booking-service
+            docker compose -p automatch-prod -f docker-compose.prod.yml up -d booking-service
+
+      - name: Deploy Notification Service
+        if: steps.changes.outputs.notification_service == 'true'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          command_timeout: 30m
+          script: |
+            cd automatch-backend/prod
+            docker compose -p automatch-prod -f docker-compose.prod.yml pull notification-service
+            docker compose -p automatch-prod -f docker-compose.prod.yml up -d notification-service
+
+      - name: Clean up unused Docker resources
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          command_timeout: 30m
+          script: docker system prune -af
