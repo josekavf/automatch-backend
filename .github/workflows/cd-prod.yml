@@ -201,8 +201,8 @@ jobs:
           command_timeout: 30m
           script: |
             cd automatch-backend/prod
-            docker compose -p automatch-prod -f docker-compose.prod.yml pull postgres redis kafka otel-collector pgadmin kafdrop jaeger prometheus loki grafana
-            docker compose -p automatch-prod -f docker-compose.prod.yml up -d postgres redis kafka otel-collector pgadmin kafdrop jaeger prometheus loki grafana
+            docker compose -p automatch-prod -f docker-compose.prod.yml pull postgres redis kafka pgadmin kafdrop
+            docker compose -p automatch-prod -f docker-compose.prod.yml up -d postgres redis kafka pgadmin kafdrop
 
       - name: Clean up unused Docker resources
         uses: appleboy/ssh-action@master
