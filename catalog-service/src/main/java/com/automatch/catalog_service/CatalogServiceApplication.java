@@ -11,3 +11,4 @@ public class CatalogServiceApplication {
 	}
 
 }
+// Trigger redeploy
