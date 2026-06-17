@@ -39,6 +39,7 @@ services:
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_KRAFT_CLUSTER_ID=L69V4vT4Tz2X6Z0X8y3X4A
+      - KAFKA_CFG_LOG_RETENTION_HOURS=3
     restart: always
     networks:
       - automatch-net-prod
@@ -185,6 +186,7 @@ services:
       - "127.0.0.1:9090:9090"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=3h'
     volumes:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
@@ -196,6 +198,8 @@ services:
     ports:
       - "127.0.0.1:3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./docker/loki/local-config.yaml:/etc/loki/local-config.yaml
     networks:
       - automatch-net-prod
 
