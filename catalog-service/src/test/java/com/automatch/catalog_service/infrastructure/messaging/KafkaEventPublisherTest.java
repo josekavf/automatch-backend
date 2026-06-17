@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.UUID;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,14 +25,18 @@ class KafkaEventPublisherTest {
     private KafkaEventPublisher kafkaEventPublisher;
 
     @Test
-    void shouldPublishProfessionalUpdated() {
-        UUID id = UUID.randomUUID();
+    void publishProfessionalUpdated_ShouldSendToKafka() {
         ProfessionalUpdatedEvent event = ProfessionalUpdatedEvent.builder()
-                .id(id)
+                .id(UUID.randomUUID())
+                .firstName("John")
+                .lastName("Doe")
+                .specialty("Mechanic")
+                .services(List.of("Oil Change"))
+                .active(true)
                 .build();
 
-        kafkaEventPublisher.publishProfessionalUpdated(event);
+        kafkaEventPublisher.handleProfessionalUpdatedEvent(event);
 
-        verify(kafkaTemplate).send(eq("topic-catalog-events"), eq(id.toString()), eq(event));
+        verify(kafkaTemplate).send("topic-catalog-events", event.getId().toString(), event);
     }
 }

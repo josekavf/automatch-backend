@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -27,55 +28,62 @@ class UpdateProfessionalUseCaseTest {
     private ProfessionalRepository professionalRepository;
 
     @Mock
-    private EventPublisher eventPublisher;
+    private org.springframework.context.ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     private UpdateProfessionalUseCase updateProfessionalUseCase;
 
-    private UUID id;
+    private UUID professionalId;
     private UpdateProfessionalRequest request;
-    private Professional professional;
+    private Professional existingProfessional;
 
     @BeforeEach
     void setUp() {
-        id = UUID.randomUUID();
-        request = UpdateProfessionalRequest.builder()
-                .firstName("Jane")
-                .lastName("Smith")
-                .specialty("Electrician")
-                .services(List.of("Wiring", "Lighting"))
-                .active(true)
-                .build();
+        professionalId = UUID.randomUUID();
+        
+        request = new UpdateProfessionalRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Smith");
+        request.setSpecialty("Electrician");
+        request.setServices(List.of("Battery Replacement"));
+        request.setActive(false);
 
-        professional = Professional.builder()
-                .id(id)
+        existingProfessional = Professional.builder()
+                .id(professionalId)
                 .firstName("John")
                 .lastName("Doe")
                 .specialty("Mechanic")
-                .services(List.of("Oil change"))
-                .active(false)
+                .services(List.of("Oil Change"))
+                .active(true)
                 .build();
     }
 
     @Test
-    void shouldUpdateProfessionalSuccessfully() {
-        when(professionalRepository.findById(id)).thenReturn(Optional.of(professional));
+    void execute_WhenProfessionalExists_ShouldUpdateAndPublishEvent() {
+        when(professionalRepository.findById(professionalId)).thenReturn(Optional.of(existingProfessional));
+        when(professionalRepository.save(any(Professional.class))).thenReturn(existingProfessional);
 
-        updateProfessionalUseCase.execute(id, request);
+        updateProfessionalUseCase.execute(professionalId, request);
 
-        verify(professionalRepository).save(professional);
-        verify(eventPublisher).publishProfessionalUpdated(any(ProfessionalUpdatedEvent.class));
+        assertEquals(request.getFirstName(), existingProfessional.getFirstName());
+        assertEquals(request.getLastName(), existingProfessional.getLastName());
+        assertEquals(request.getSpecialty(), existingProfessional.getSpecialty());
+        assertEquals(request.getServices(), existingProfessional.getServices());
+        assertEquals(request.isActive(), existingProfessional.isActive());
+
+        verify(professionalRepository).save(existingProfessional);
+        verify(applicationEventPublisher).publishEvent(any(com.automatch.catalog_service.domain.event.ProfessionalUpdatedEvent.class));
     }
 
     @Test
     void shouldThrowExceptionWhenProfessionalNotFound() {
-        when(professionalRepository.findById(id)).thenReturn(Optional.empty());
+        when(professionalRepository.findById(professionalId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> updateProfessionalUseCase.execute(id, request))
+        assertThatThrownBy(() -> updateProfessionalUseCase.execute(professionalId, request))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Profissional não encontrado");
 
         verify(professionalRepository, never()).save(any());
-        verify(eventPublisher, never()).publishProfessionalUpdated(any());
+        verify(applicationEventPublisher, never()).publishEvent(any());
     }
 }
